@@ -1,0 +1,10 @@
+lib-cov
+node_modules/
+jspm_packages/
+dist
+.env
+.sqlite
+coverage
+data.txt
+database.sqlite
+test.js
