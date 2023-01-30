@@ -1,13 +1,19 @@
-import bcrypt from 'bcryptjs';
+import { google } from 'googleapis';
 import { Request, Response, NextFunction } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { createCommentSchema, options } from '../utils/utils';
 import { CommentHistoryInstance } from '../model/commentHistoryModel';
 import { PostInstance } from '../model/postModel';
 
-export const createComments = async (req: Request | any, res: Response, next: NextFunction) => {
-  const id = uuidv4();
+const auth = new google.auth.GoogleAuth({
+  keyFile: 'credentials.json',
+  scopes: 'https://www.googleapis.com/auth/spreadsheets',
+});
 
+const spreadsheetId = process.env.SHEET_ID;
+
+const client = auth.getClient();
+
+export const createComments = async (req: Request | any, res: Response, next: NextFunction) => {
   try {
     const userId = req.user.id;
 
@@ -23,7 +29,6 @@ export const createComments = async (req: Request | any, res: Response, next: Ne
     }
     if (post) {
       const comment = await CommentHistoryInstance.create({
-        id: id,
         userId: userId,
         postID: postID,
         commentBody: commentBody,
@@ -38,7 +43,22 @@ export const createComments = async (req: Request | any, res: Response, next: Ne
         },
         { new: true },
       );
+      const client = await auth.getClient();
 
+      const googleSheets: any = google.sheets({
+        version: 'v4',
+        auth: client,
+      });
+
+      await googleSheets.spreadsheets.values.append({
+        auth,
+        spreadsheetId,
+        range: 'Created!B:F',
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [[firstName, lastName, postID, userId, commentBody]],
+        },
+      });
       return res.status(201).json({
         message: 'You have successful commented on post',
         comment,
@@ -55,14 +75,52 @@ export const createComments = async (req: Request | any, res: Response, next: Ne
 };
 
 // get all comments
-export const getAllComments = async (req: Request | any, res: Response, next: NextFunction) => {
+export const getAllComments = async (req: Request | any, res: Response | any, next: NextFunction) => {
   try {
-    const userId = req.user.id;
-    const allComments = await CommentHistoryInstance.find({ userId });
+    const client = await auth.getClient();
+
+    const googleSheets: any = google.sheets({
+      version: 'v4',
+      auth: client,
+    });
+
+    const allComments = await CommentHistoryInstance.find();
     if (!allComments) {
-      return res.status(404).json({ message: 'No allComments found' });
+      return res.status(404).json({ message: 'No Comments found' });
     }
-    return res.status(200).json({ allComments });
+    //  group comments by postID
+    const groupedComments = allComments.reduce((acc: any, comment: any) => {
+      const { postID } = comment;
+      if (!acc[postID]) {
+        acc[postID] = [];
+      }
+      acc[postID].push(comment);
+      return acc;
+    }, {});
+
+    // const comments = Object.values(groupedComments);
+    // console.log(groupedComments);
+    // console.log();
+
+    // console.log(comments);
+
+    await googleSheets.spreadsheets.values.append({
+      auth,
+      spreadsheetId,
+      range: 'Database!B:F',
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: allComments.map((comment) => [
+          comment.firstName,
+          comment.lastName,
+          comment.postID,
+          comment.userId,
+          comment.commentBody,
+        ]),
+      },
+    });
+
+    return res.status(200).json({ message: 'Sucessfully fetched all comments' });
   } catch (error) {
     return res.status(500).json({
       status: 'error',

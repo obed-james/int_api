@@ -11,3 +11,4 @@ test.js
 Dockerfile
 .*
 
+credentials.json

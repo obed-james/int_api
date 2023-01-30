@@ -242,16 +242,16 @@ paths:
               allOf:
                 - $ref: '#/components/schemas/registeruserrequest'
                 - example:
-                    name: Adeyinka
-                    occupation: Kayode
-                    dateOfBirth: tjvpro
+                    name: John
+                    occupation: Doe
+                    dateOfBirth: 04/01/2003
                     email: example@domain.com
                     password: '1234567890'
                     confirmPassword: '1234567890'
             example:
-              name: Adeyinka
-              occupation: Kayode
-              dateOfBirth: tjvpro
+              name: John
+              occupation: Doyin
+              dateOfBirth: 04/01/2004
               email: example@domain.com
               password: '1234567890'
               confirmPassword: '1234567890'
