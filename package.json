@@ -7,14 +7,8 @@
     "build": "tsc",
     "serve": "nodemon ./bin/www",
     "dev": "ts-node-dev --respawn ./bin/www",
-    "compile": "tsc -w",
-    "test": "jest --detectOpenHandles --runInBand",
-    "lint": "eslint ./src/**/*.ts",
-    "lint-fix": "eslint --fix src/**/*.ts",
-    "pretty": "prettier --write 'src/**/*.ts'",
-    "prepare": "cd .. && husky install server/.husky",
-    "precommit": "yarn lint-fix && yarn pretty",
-    "prepush": "yarn lint"
+    "compile": "tsc -w"
+    
   },
   "dependencies": {
     "axios": "~1.0.0",

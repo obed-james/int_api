@@ -33,18 +33,18 @@ export async function sendSurveyNotification(): Promise<any> {
     const message = `A new survey has been created by ISDS`;
 
     const allUsers = await userInstance.find({ isVerified: true });
-    const emails = allUsers.map((user) => {
-      const date = parseInt(new Date(user.date));
-      const currentDate = parseInt(new Date());
-      const diff = Math.abs(currentDate - date);
+    const emails: any = allUsers.map((user) => {
+      let oldDate: any = user.date;
+      const date: any = new Date(oldDate);
+      const currentDate: any = new Date();
+      const diff: any = Math.abs(currentDate - date);
       const hours = Math.floor(diff / 3600000);
-      console.log(hours);
+      // console.log(hours);
       let output = Math.ceil(hours / 24);
       if (output > 7) {
-        return      sendMails.surveyNotification(emails, message);
+        return sendMails.surveyNotification(user.email, message);
       }
     });
-
   } catch (error: any) {
     return error.message;
   }
