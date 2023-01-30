@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "start:docker": "yarn build && yarn start",
-    "build": "rimraf dist && tsc",
+    "build": "tsc",
     "serve": "nodemon ./bin/www",
     "dev": "ts-node-dev --respawn ./bin/www",
     "compile": "tsc -w",
