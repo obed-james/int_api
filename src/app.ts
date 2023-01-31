@@ -18,20 +18,15 @@ import postRouter from './routes/postRoute';
 import commentRouter from './routes/commentRoute';
 import { sendSurveyNotification } from './controller/surveyController';
 
-// db.sync({
-//   // force: true,
-// })
-//   .then(() => {
-//     console.log('Database connected successfully 🚀');
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+const corsConfig = {
+    credentials: true,
+    origin: true,
+};
 
 const app = express();
 
 app.use(logger('dev'));
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(expressUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
