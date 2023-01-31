@@ -7,7 +7,7 @@ info:
     email: integratedsoftwaredataservices@gmail.com
   version: '1.0'
 servers:
-  - url: https://isdservices-org-api.onrender.com
+  - url: https://isds.onrender.com
     description: This is the production server
     variables: {}
   - url: http://localhost:4400
